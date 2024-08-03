@@ -39,7 +39,7 @@ add += "\n"
 st.code(add, language="wiki")
 body += add
 
-ace_ortho = {"a":"a", "é":"e", "è":"ɛ", "e":"ə", "ë":"ə̯", "i":"i", "ô":"o", "o":"ɔ", "ö":"ʌ", "u":"u", "b":"b", "c":"c", "d":"d", "g":"g", "h":"h", "j":"ɟ", "k":"k", "l":"l", "m":"m", "n":"n", "p":"p", "r":"r", "s":"s", "t":"t", "w":"w", "y":"j"}
+ace_ortho = {"a":"a", "é":"e", "è":"ɛ", "e":"ə", "ë":"ə̯", "i":"i", "ô":"o", "o":"ɔ", "ö":"ʌ", "u":"u", "b":"b", "c":"c", "d":"d", "g":"g", "h":"h", "j":"ɟ", "k":"k", "l":"l", "m":"m", "n":"n", "p":"p", "r":"r", "s":"s", "t":"t", "w":"w", "y":"j", "g":"ɡ"}
 clust = (
     "tr", "pr", "kr", "gr", "ɟr", "cr", "dr", "br", "sr", "pl", "bl", "kl", "gl", "ɟl", "cl", "ph", "bh", "kh", "gh", "ɟh", "ch", "th", "dh", "ɲh", "rh", "lh"
 )
@@ -84,21 +84,21 @@ def IPAgen(term):
     )
     
     final = re.sub(
-        pattern=r"(tr|pr|kr|gr|ɟr|cr|dr|br|sr|pl|bl|kl|gl|ɟl|cl|ph|bh|kh|gh|ɟh|ch|th|dh|ɲh|rh|lh)",
+        pattern=r".(tr|pr|kr|gr|ɟr|cr|dr|br|sr|pl|bl|kl|gl|ɟl|cl|ph|bh|kh|gh|ɟh|ch|th|dh|ɲh|rh|lh)",
         repl=r".\1",
         string=final
     )
 
 
     final=re.sub( #detects an closed syllable (VFC)
-        pattern=r"([iɯueəoɛʌɔa])([ptkmnŋh])([mnɲŋptckʔbdɟɡfsʃhzljwr])",
+        pattern=r"([iɯueəoɛʌɔa̯])([ptkmnŋh])([mnɲŋptckʔbdɟɡfsʃhzljwr])",
         repl=r"\1\2.\3",
         string=final
     )
 
 
     final=re.sub( #detects VCV
-        pattern=r"([iɯueəoɛʌɔa])([mnɲŋptckʔbdɟɡfsʃhzljwr])(?=[iɯueəoɛʌɔa])",
+        pattern=r"([iɯueəoɛʌɔa̯])([mnɲŋptckʔbdɟɡfsʃhzljwr])(?=[iɯueəoɛʌɔa̯])",
         repl=r"\1.\2",
         string=final
     )
