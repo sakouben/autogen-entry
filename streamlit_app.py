@@ -1,25 +1,15 @@
 import streamlit as st
 import pandas as pd
+import re
 
 st.title("Acehnese")
+st.header("Term")
 
-body = """
-==Acehnese==
-
-===Alternative forms===
-* [[aleue]] (''nonstandard'')
-
-===Pronunciation===
-{{IPA|ace|/alɯə/}}
-
-===Noun===
-{{head|ace|noun}}
-
-# [[floor]]<ref>{{R:ace:Bakar 1985 Seri 1|18|entry=aleue}}</ref>
-
-===References===
-<references/>
-"""
+term = st.text_input(
+    label="Term",
+    label_visibility="collapsed",
+    placeholder="Term"
+)
 
 body = "==Acehnese==\n\n"
 
@@ -49,9 +39,48 @@ add += "\n"
 st.code(add, language="wiki")
 body += add
 
+ace_ortho = {"a":"a", "é":"e", "è":"ɛ", "e":"ə", "ë":"ə̯", "i":"i", "ô":"o", "o":"ɔ", "ö":"ʌ", "u":"u", "eu":"ɯ ", "b":"b", "c":"c", "d":"d", "g":"g", "h":"h", "j":"ɟ", "k":"k", "l":"l", "m":"m", "n":"n", "p":"p", "r":"r", "s":"s", "t":"t", "w":"w", "y":"j", "ng":"ŋ", "ny":"ɲ"}
 
+def IPAgen(term):
+    term = str(term)
+    subterm = re.sub(
+        pattern=r"([aeiouèéëôö])k", 
+        repl=r"\1ʔ",
+        string=term
+        )
+    subterm = re.sub(
+        pattern=r"ng",
+        repl=r"ŋ",
+        string=subterm
+        )
+    subterm = re.sub(
+        pattern=r"ny",
+        repl=r"ɲ",
+        string=subterm
+        )
+    
+    final = ""
+
+    for x in subterm:
+        try:
+            final += ace_ortho[x]
+        except:
+            final += x
+    return final
+
+
+termpropipa = IPAgen(term)
 st.header("Pronunciation")
-IPA = st.text_input("IPA")
+
+st.caption("IPA from spelling")
+st.code(termpropipa)
+IPA = st.text_input(
+    label="IPA", 
+    placeholder="IPA",
+    value=termpropipa
+)
+
+
 
 add = "===Pronunciation===" + "\n"
 add += "{{" + f"IPA|ace|/{IPA}/" + "}}\n\n"
@@ -98,13 +127,14 @@ posbox = st.selectbox(
 )
 posbox_res = str(poslookupdict[posbox.lower()])
 add = f"==={posbox}===" + "\n"
-add += "{{head|ace|" + f"{posbox_res}" + "}}"
+add += "{{head|ace|" + f"{posbox_res}" + "}\n\n"
 st.code(add, language="wiki")
 body += add
 
+st.header("Senses")
 df = pd.DataFrame(
     [
-       {"Sense": None, "Reference": None},
+       {"Sense": "None", "Reference": "Other", "Page": "1"},
    ]
 )
 
@@ -116,20 +146,38 @@ edited_df = st.data_editor(df,
                                "Reference":st.column_config.SelectboxColumn(
                                    options=[
                                        "Bakar 1985 Seri 1",
-                                       "Bakar 1985 Seri 2"
+                                       "Bakar 1985 Seri 2",
+                                       "Other"
                                    ]
-                               )
+                               ),
+                               "Page":st.column_config.TextColumn(width="small")
                            },
-                           hide_index=True
+                           hide_index=True,
                            )
 
+ref_dict={"Bakar 1985 Seri 1":"R:ace:Bakar 1985 Seri 1", "Bakar 1985 Seri 2":"R:ace:Bakar 1985 Seri 2", "Other":"Other"}
+
+add = ""
+for x in edited_df.to_numpy():
+    sense = x[0]
+    reference = x[1]
+    page = x[2]
+
+    add += "# [["
+    add += sense
+    add += "]]<ref>{{"
+    add += ref_dict[reference]
+    add += "|"
+    add += str(page)
+    add += "}}</ref>\n"
 
 
+st.code(add, language="wiki")
+body += add
 
+body += "\n===References===\n<references/>"
 
-
-
-
+st.header("Final code")
 
 st.code(body, language="wiki", line_numbers=True)
 
