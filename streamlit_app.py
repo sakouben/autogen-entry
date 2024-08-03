@@ -39,7 +39,8 @@ add += "\n"
 st.code(add, language="wiki")
 body += add
 
-ace_ortho = {"a":"a", "é":"e", "è":"ɛ", "e":"ə", "ë":"ə̯", "i":"i", "ô":"o", "o":"ɔ", "ö":"ʌ", "u":"u", "eu":"ɯ ", "b":"b", "c":"c", "d":"d", "g":"g", "h":"h", "j":"ɟ", "k":"k", "l":"l", "m":"m", "n":"n", "p":"p", "r":"r", "s":"s", "t":"t", "w":"w", "y":"j", "ng":"ŋ", "ny":"ɲ"}
+ace_ortho = {"a":"a", "é":"e", "è":"ɛ", "e":"ə", "ë":"ə̯", "i":"i", "ô":"o", "o":"ɔ", "ö":"ʌ", "u":"u", "b":"b", "c":"c", "d":"d", "g":"g", "h":"h", "j":"ɟ", "k":"k", "l":"l", "m":"m", "n":"n", "p":"p", "r":"r", "s":"s", "t":"t", "w":"w", "y":"j"}
+
 
 def IPAgen(term):
     term = str(term)
@@ -58,6 +59,11 @@ def IPAgen(term):
         repl=r"ɲ",
         string=subterm
         )
+    subterm = re.sub(
+        pattern=r"eu",
+        repl=r"ɯ",
+        string=subterm
+        )
     
     final = ""
 
@@ -66,7 +72,26 @@ def IPAgen(term):
             final += ace_ortho[x]
         except:
             final += x
+
+    #nasalization
+
+    final = re.sub(
+        pattern=r"’(.)",
+        repl=r"\1̃",
+        string=final
+    )
+
+    #removing '-'
+
+    final = re.sub(
+        pattern=r'-',
+        repl=r'.',
+        string=final
+    )
+
     return final
+
+
 
 
 termpropipa = IPAgen(term)
