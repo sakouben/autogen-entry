@@ -89,17 +89,20 @@ def IPAgen(term):
         string=final
     )
 
-    final=re.sub( #detects an open syllable (VFV)
-        pattern=r"([iɯueəoɛʌɔa])([ptkmnŋh])([iɯueəoɛʌɔa])",
-        repl=r"\1.\2\3",
-        string=final
-    )
 
     final=re.sub( #detects an closed syllable (VFC)
         pattern=r"([iɯueəoɛʌɔa])([ptkmnŋh])([mnɲŋptckʔbdɟɡfsʃhzljwr])",
         repl=r"\1\2.\3",
         string=final
     )
+
+
+    final=re.sub( #detects VCV
+        pattern=r"([iɯueəoɛʌɔa])([mnɲŋptckʔbdɟɡfsʃhzljwr])(?=[iɯueəoɛʌɔa])",
+        repl=r"\1.\2",
+        string=final
+    )
+
 
     final = re.sub(
         pattern=r"-",
@@ -108,6 +111,7 @@ def IPAgen(term):
     )
 
     return final
+    
 
 
 
@@ -115,7 +119,7 @@ def IPAgen(term):
 termpropipa = IPAgen(term)
 st.header("Pronunciation")
 
-st.caption("IPA from spelling")
+st.caption("IPA from spelling (experimental!)")
 st.code(termpropipa)
 IPA = st.text_input(
     label="IPA", 
