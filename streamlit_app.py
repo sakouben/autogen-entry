@@ -40,12 +40,14 @@ st.code(add, language="wiki")
 body += add
 
 ace_ortho = {"a":"a", "é":"e", "è":"ɛ", "e":"ə", "ë":"ə̯", "i":"i", "ô":"o", "o":"ɔ", "ö":"ʌ", "u":"u", "b":"b", "c":"c", "d":"d", "g":"g", "h":"h", "j":"ɟ", "k":"k", "l":"l", "m":"m", "n":"n", "p":"p", "r":"r", "s":"s", "t":"t", "w":"w", "y":"j"}
-
+clust = (
+    "tr", "pr", "kr", "gr", "ɟr", "cr", "dr", "br", "sr", "pl", "bl", "kl", "gl", "ɟl", "cl", "ph", "bh", "kh", "gh", "ɟh", "ch", "th", "dh", "ɲh", "rh", "lh"
+)
 
 def IPAgen(term):
     term = str(term)
     subterm = re.sub(
-        pattern=r"([aeiouèéëôö])k", 
+        pattern=r"([aeiouèéëôö])k($|-)", 
         repl=r"\1ʔ",
         string=term
         )
@@ -80,12 +82,28 @@ def IPAgen(term):
         repl=r"\1̃",
         string=final
     )
+    
+    final = re.sub(
+        pattern=r"(tr|pr|kr|gr|ɟr|cr|dr|br|sr|pl|bl|kl|gl|ɟl|cl|ph|bh|kh|gh|ɟh|ch|th|dh|ɲh|rh|lh)",
+        repl=r".\1",
+        string=final
+    )
 
-    #removing '-'
+    final=re.sub( #detects an open syllable (VFV)
+        pattern=r"([iɯueəoɛʌɔa])([ptkmnŋh])([iɯueəoɛʌɔa])",
+        repl=r"\1.\2\3",
+        string=final
+    )
+
+    final=re.sub( #detects an closed syllable (VFC)
+        pattern=r"([iɯueəoɛʌɔa])([ptkmnŋh])([mnɲŋptckʔbdɟɡfsʃhzljwr])",
+        repl=r"\1\2.\3",
+        string=final
+    )
 
     final = re.sub(
-        pattern=r'-',
-        repl=r'.',
+        pattern=r"-",
+        repl=".",
         string=final
     )
 
@@ -102,8 +120,10 @@ st.code(termpropipa)
 IPA = st.text_input(
     label="IPA", 
     placeholder="IPA",
-    value=termpropipa
+    value=termpropipa,
+    help="Don't forget to add syllable breaks with dots!"
 )
+
 
 
 
